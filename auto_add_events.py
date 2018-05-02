@@ -1,8 +1,8 @@
 
 from __future__ import print_function
-#from apiclient.discovery import build
-#from httplib2 import Http
-#from oauth2client import file, client, tools
+from apiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 import datetime
 import json
 import sys
@@ -25,7 +25,7 @@ def get_date_info():
     json_date = json.dumps(build_json(event_date,event_time,event_title,event_location))
     print (json_date)
     print (event_time, event_title)
-    print (event_data[0])
+    
   
 
 def build_json(event_date,event_time,event_title,event_location):
