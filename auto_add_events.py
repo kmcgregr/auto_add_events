@@ -11,12 +11,19 @@ import StringIO
 MY_TIMEZONE = "America/New_York"
 
 def setup_calendar_api():
-    SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+    try:
+        import argparse
+        flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+    except ImportError:
+        flags = None
+    
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
     store = file.Storage('credentials.json')
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('client_secret.json', SCOPES)
-        creds = tools.run_flow(flow, store)
+        creds = tools.run_flow(flow, store, flags) \
+            if flags else tools.run(flow,store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     return service
 
