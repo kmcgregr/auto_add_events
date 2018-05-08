@@ -1,0 +1,12 @@
+{"start": {
+             "timeZone": "America/New_York",
+              "dateTime": "2018-05-17T18:00:00"
+           }, 
+"description": "Jelena's soccer match", 
+"end": {
+         "timeZone": "America/New_York", 
+          "dateTime": "2018-05-17T19:00:00"
+          }, 
+"location": "Oakridge HS Mini Field - West", 
+"summary": "Soccer Match"
+}
