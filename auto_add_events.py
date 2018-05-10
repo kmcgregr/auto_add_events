@@ -27,48 +27,52 @@ def setup_calendar_api():
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     return service
 
-def add_events_to_calender(lines):
+def add_events_to_calender(service, lines):
 
     for line in lines:
-       
         event_data = line.strip().split(",")
-        event_date,event_start_time,event_end_time,event_title,event_location = event_data
-        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location))
-        print (json_event)
-        #event = service.events().insert(calendarId='primary', body=json_event).execute()
-        #print ('Event created: %s' % (event.get('htmlLink')))
+       
+        event_date,event_start_time,event_end_time,event_title,event_location,event_description = event_data
+       
+        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location,event_description))
+       
+        calendar_events = json.loads(json_event)
+       
+        event = service.events().insert(calendarId='primary', body=calendar_events).execute()
+        print ('Event created: %s' % (event.get('htmlLink')))
 
-def build_json(event_date,event_start_time,event_end_time,event_title,event_location):
+def build_json(event_date,event_start_time,event_end_time,event_title,event_location,event_description):
   
     json_event_data = {}
     
 
     json_start_date = {}
-    json_start_date['timeZone'] = MY_TIMEZONE
-    json_start_date['dateTime'] = event_date + "T" + event_start_time
     
+    json_start_date['dateTime'] = event_date + 'T' + event_start_time
+    json_start_date['timeZone'] = MY_TIMEZONE
     json_event_data['start'] = json_start_date
 
     json_end_date = {}
-    json_end_date['dateTime'] = event_date + "T" + event_end_time
+    json_end_date['dateTime'] = event_date + 'T' + event_end_time
     json_end_date['timeZone'] = MY_TIMEZONE
    
     json_event_data['end'] = json_end_date
-
-    json_event_data['summary'] = event_title
+    
     json_event_data['location'] = event_location
+    json_event_data['summary'] = event_title
+    json_event_data['description'] = event_description
+    
     return json_event_data
+    
 
-test_text = """2018-05-10,18:00:00,19:00:00,Soccer Match,Oakridge HS Mini Field - West"""
 
 def main():
     with open('events.csv') as f:
         lines = f.readlines()
 
-    print (lines)
-    sys.stdin = StringIO.StringIO(lines)
-    #calender_service = setup_calendar_api()
-    add_events_to_calender(lines)
-    sys.stdin = sys.__stdin__
+       
+    calender_service = setup_calendar_api()
+    add_events_to_calender(calender_service,lines)
+    
 
 main()
