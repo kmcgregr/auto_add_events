@@ -27,14 +27,16 @@ def setup_calendar_api():
     service = build('calendar', 'v3', http=creds.authorize(Http()))
     return service
 
-def add_events_to_calender(service):
+def add_events_to_calender(lines):
 
-    for line in sys.stdin:
+    for line in lines:
+       
         event_data = line.strip().split(",")
         event_date,event_start_time,event_end_time,event_title,event_location = event_data
-    json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location))
-    event = service.events().insert(calendarId='primary', body=json_event).execute()
-    print ('Event created: %s' % (event.get('htmlLink')))
+        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location))
+        print (json_event)
+        #event = service.events().insert(calendarId='primary', body=json_event).execute()
+        #print ('Event created: %s' % (event.get('htmlLink')))
 
 def build_json(event_date,event_start_time,event_end_time,event_title,event_location):
   
@@ -57,12 +59,16 @@ def build_json(event_date,event_start_time,event_end_time,event_title,event_loca
     json_event_data['location'] = event_location
     return json_event_data
 
-test_text = """2018-05-10,18:00,19:00,Soccer Match,Oakridge HS Mini Field - West"""
+test_text = """2018-05-10,18:00:00,19:00:00,Soccer Match,Oakridge HS Mini Field - West"""
 
 def main():
-    sys.stdin = StringIO.StringIO(test_text)
-    calender_service = setup_calendar_api()
-    add_events_to_calender(calender_service)
+    with open('events.csv') as f:
+        lines = f.readlines()
+
+    print (lines)
+    sys.stdin = StringIO.StringIO(lines)
+    #calender_service = setup_calendar_api()
+    add_events_to_calender(lines)
     sys.stdin = sys.__stdin__
 
 main()
