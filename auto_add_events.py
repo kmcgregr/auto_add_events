@@ -9,6 +9,7 @@ import sys
 import StringIO
 
 MY_TIMEZONE = "America/New_York"
+TIME_FILLER = ":00"
 
 def setup_calendar_api():
     try:
@@ -48,12 +49,12 @@ def build_json(event_date,event_start_time,event_end_time,event_title,event_loca
 
     json_start_date = {}
     
-    json_start_date['dateTime'] = event_date + 'T' + event_start_time
+    json_start_date['dateTime'] = event_date + 'T' + event_start_time + TIME_FILLER
     json_start_date['timeZone'] = MY_TIMEZONE
-    json_event_data['start'] = json_start_date
+    json_event_data['start'] = json_start_date 
 
     json_end_date = {}
-    json_end_date['dateTime'] = event_date + 'T' + event_end_time
+    json_end_date['dateTime'] = event_date + 'T' + event_end_time + TIME_FILLER
     json_end_date['timeZone'] = MY_TIMEZONE
    
     json_event_data['end'] = json_end_date
