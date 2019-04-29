@@ -6,7 +6,7 @@ from oauth2client import file, client, tools
 import datetime
 import json
 import sys
-import StringIO
+
 
 MY_TIMEZONE = "America/New_York"
 TIME_FILLER = ":00"
