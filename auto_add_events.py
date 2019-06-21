@@ -40,7 +40,7 @@ def add_events_to_calender(service, lines):
 
     for line in lines:
         event_data = line.strip().split(",")
-       
+        print (event_data)
         event_date,event_start_time,event_end_time,event_title,event_location,event_description = event_data
        
         json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location,event_description))
