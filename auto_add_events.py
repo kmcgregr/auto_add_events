@@ -38,15 +38,31 @@ def setup_calendar_api():
 
 def add_events_to_calender(service, lines):
 
+    #TODO#############
+    #  parse events.csv with format "Event description", "date", "time", "location"
+    #  date parsing --- need to return start and end date in format yyyy-mm-day put it in a list
+    #  tiime --- need to return start time and end time
+
     for line in lines:
         event_data = line.strip().split(",")
         print (event_data)
-        event_date,event_start_time,event_end_time,event_title,event_location,event_description = event_data
-       
-        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,event_title,event_location,event_description))
+        title,date,time,location,description = event_data
+        
+        event_date = str(build_date(date))
+
+        if time.find("-")!= -1:
+            #split
+            event_times = time.split('-')
+            start_time,end_time = event_times
+            event_start_time = str(convert24(start_time))
+            event_end_time = str(convert24(end_time))
+        else:
+            event_start_time = str(convert24(time))
+            event_end_time = event_start_time
+                
+        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,title,location,description))
        
         calendar_events = json.loads(json_event)
-       
         event = service.events().insert(calendarId='primary', body=calendar_events).execute()
         print ('Event created: %s' % (event.get('htmlLink')))
 
@@ -73,6 +89,30 @@ def build_json(event_date,event_start_time,event_end_time,event_title,event_loca
     
     return json_event_data
     
+def build_date(date_to_process):
+    date_time_obj = datetime.datetime.strptime(date_to_process,"%d %B %Y")
+    return date_time_obj.date()
+
+def convert24(str1): 
+      
+    # Checking if last two elements of time 
+    # is AM and first two elements are 12 
+    if str1[-2:] == "AM" and str1[:2] == "12": 
+        return "00" + str1[2:-2] 
+          
+    # remove the AM     
+    elif str1[-2:] == "AM": 
+        return str1[:-2] 
+      
+    # Checking if last two elements of time 
+    # is PM and first two elements are 12    
+    elif str1[-2:] == "PM" and str1[:2] == "12": 
+        return str1[:-2] 
+          
+    else: 
+          
+        # add 12 to hours and remove PM 
+        return str(int(str1[:1]) + 12) + ":" + str1[2:8] 
 
 
 def main():
@@ -80,8 +120,8 @@ def main():
         lines = f.readlines()
 
        
-    calender_service = setup_calendar_api()
-    add_events_to_calender(calender_service,lines)
+    calendar_service = setup_calendar_api()
+    add_events_to_calender(calendar_service,lines)
     
 
 main()
