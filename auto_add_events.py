@@ -60,8 +60,9 @@ def add_events_to_calender(service, lines):
             event_start_time = str(convert24(time))
             event_end_time = event_start_time
                 
-        json_event = json.dumps(build_json(event_date,event_start_time,event_end_time,title,location,description))
-       
+        
+        json_event = json.dumps(build_json(event_date,event_start_time.strip(),event_end_time.strip(),title,location,description))
+        print (json_event)
         calendar_events = json.loads(json_event)
         event = service.events().insert(calendarId='primary', body=calendar_events).execute()
         print ('Event created: %s' % (event.get('htmlLink')))
@@ -86,6 +87,11 @@ def build_json(event_date,event_start_time,event_end_time,event_title,event_loca
     json_event_data['location'] = event_location
     json_event_data['summary'] = event_title
     json_event_data['description'] = event_description
+
+    json_event_reminders = {}
+    json_event_reminders['useDefault'] = 'True'
+
+    json_event_data['reminders'] = json_event_reminders
     
     return json_event_data
     
@@ -97,12 +103,12 @@ def convert24(str1):
       
     # Checking if last two elements of time 
     # is AM and first two elements are 12 
-    if str1[-2:] == "AM" and str1[:2] == "12": 
+    if str1[-2:] == "AM" and str1[:1] == "12": 
         return "00" + str1[2:-2] 
           
     # remove the AM     
     elif str1[-2:] == "AM": 
-        return str1[:-2] 
+        return '0' + str1[:-2] 
       
     # Checking if last two elements of time 
     # is PM and first two elements are 12    
@@ -112,7 +118,7 @@ def convert24(str1):
     else: 
           
         # add 12 to hours and remove PM 
-        return str(int(str1[:1]) + 12) + ":" + str1[2:8] 
+        return str(int(str1[:1]) + 12) + ":" + str1[2:4] 
 
 
 def main():
