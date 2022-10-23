@@ -44,12 +44,21 @@ def add_events_to_calender(service, lines):
     #  tiime --- need to return start time and end time
 
     for line in lines:
-        event_data = line.strip().split(",")
-        print (event_data)
-        title,date,time,location,description = event_data
         
-        event_date = str(build_date(date))
-
+        if line.find("Yard") != -1 or line.find("Garbage") != 0:
+            event_data = line.strip().split(",")
+            event_date,title = event_data
+            time = "7:00 AM-7:00 AM"  
+            location = "Redoak"
+            description = "Garbage pickup"
+        else:      
+             event_data = line.strip().split(",")
+             print (event_data)
+             title,date,time,location,description = event_data
+             event_date = str(build_date(date))
+             print ("event date " + event_date)
+        
+        
         if time.find("-")!= -1:
             #split
             event_times = time.split('-')
@@ -66,6 +75,9 @@ def add_events_to_calender(service, lines):
         calendar_events = json.loads(json_event)
         event = service.events().insert(calendarId='primary', body=calendar_events).execute()
         print ('Event created: %s' % (event.get('htmlLink')))
+
+
+
 
 def build_json(event_date,event_start_time,event_end_time,event_title,event_location,event_description):
   
@@ -108,8 +120,11 @@ def convert24(str1):
           
     # remove the AM     
     elif str1[-2:] == "AM": 
-        return '0' + str1[:-2] 
-      
+        if int(stripcolon(str1[:2])) < 10:
+            return '0' + str1[:-2] 
+        else:
+            return str1[:-2] 
+
     # Checking if last two elements of time 
     # is PM and first two elements are 12    
     elif str1[-2:] == "PM" and str1[:2] == "12": 
@@ -119,6 +134,12 @@ def convert24(str1):
           
         # add 12 to hours and remove PM 
         return str(int(str1[:1]) + 12) + ":" + str1[2:4] 
+
+def stripcolon(str1):
+    if str1.find(":") > 0 :
+        return str1[:1]
+    else:
+        return str1
 
 
 def main():

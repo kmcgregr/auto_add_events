@@ -32,8 +32,11 @@ def convert24(str1):
           
     # remove the AM     
     elif str1[-2:] == "AM": 
-        return '0' + str1[:-2] 
-      
+        if int(stripcolon(str1[:2])) < 10:
+            return '0' + str1[:-2] 
+        else:
+            return str1[:-2] 
+
     # Checking if last two elements of time 
     # is PM and first two elements are 12    
     elif str1[-2:] == "PM" and str1[:2] == "12": 
@@ -44,6 +47,12 @@ def convert24(str1):
         # add 12 to hours and remove PM 
         return str(int(str1[:1]) + 12) + ":" + str1[2:4] 
 
+def stripcolon(str1):
+    if str1.find(":") > 0 :
+        return str1[:1]
+    else:
+        return str1
+ 
 
 def main():
     with open('events.csv') as f:
